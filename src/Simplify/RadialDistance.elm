@@ -8,7 +8,7 @@ module Simplify.RadialDistance (run) where
 -}
 
 import Simplify.Util exposing (Point, dropWhile, distance)
-
+import Trampoline exposing (Trampoline, trampoline)
 
 {-| Simplify a list of points using the Radial Distance algorithm.
 
@@ -24,24 +24,18 @@ run tolerance points =
       [] -> points
       [x] -> points
       [x,y] -> points
-      _ -> run' (abs tolerance) points
+      _ -> trampoline <| run' (abs tolerance) points
 
 
-run' : Float -> List Point -> List Point
+run' : Float -> List Point -> Trampoline (List Point)
 run' tolerance points =
   case points of
-    [] -> []
-    [x] -> points
-    [x,y] -> points
+    [] -> Trampoline.Done []
+    [x] -> Trampoline.Done points
+    [x,y] -> Trampoline.Done points
     x::xs ->
       let
         isClose point = distance x point < tolerance
-        tail = run' tolerance <| dropWhile isClose xs
-        simplified =
-          case tail of
-            -- Make sure that the last element in the simplified list is always
-            -- the last element from the original list.
-            [] -> (List.reverse >> List.take 1) xs
-            _ -> x :: tail
       in
-        simplified
+        -- TODO: how to add `x` to the list?
+        Trampoline.Continue (\_ -> (run' tolerance <| dropWhile isClose xs))
