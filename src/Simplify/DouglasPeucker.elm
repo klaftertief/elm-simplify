@@ -1,6 +1,6 @@
 module Simplify.DouglasPeucker (run) where
 
-{-| An Elm port of [simplify-js](https://github.com/mourner/simplify-js), polyline simplification library by Vladimir Agafonkin.
+{-| Douglas-Peucker polyline simplification
 
 # Usage
 @docs run
@@ -10,9 +10,9 @@ module Simplify.DouglasPeucker (run) where
 import Simplify.Util exposing (Point, farthestPoint, firstLast)
 
 
-{-| Simplify a list of points with using the Douglas-Peucker algorithm.
+{-| Simplify a list of points using the Douglas-Peucker algorithm.
 
-    runDouglasPeucker 1 [...] == [...]
+    runDouglasPeucker  1 longListOfPoints == shortListOfPoints
 -}
 run : Float -> List Point -> List Point
 run tolerance points =
@@ -31,9 +31,6 @@ run' : Float -> List Point -> List Point
 run' tolerance points =
   case points of
     [] -> points
-    --[x] -> points
-    --[x,y] -> [x,y]
-    --[x,y] -> [y]
     _ ->
       let
         farthestPointState = farthestPoint points

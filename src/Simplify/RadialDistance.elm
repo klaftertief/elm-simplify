@@ -1,6 +1,6 @@
 module Simplify.RadialDistance (run) where
 
-{-| An Elm port of [simplify-js](https://github.com/mourner/simplify-js), polyline simplification library by Vladimir Agafonkin.
+{-| Radial Distance polyline simplification
 
 # Usage
 @docs run
@@ -10,7 +10,7 @@ module Simplify.RadialDistance (run) where
 import Simplify.Util exposing (Point, dropWhile, distance)
 
 
-{-| Simplify a list of points with using the Radial Distance algorithm.
+{-| Simplify a list of points using the Radial Distance algorithm.
 
     runRadialDistance 1 longListOfPoints == shortListOfPoints
 -}
@@ -25,14 +25,6 @@ run tolerance points =
       [x] -> points
       [x,y] -> points
       _ -> run' (abs tolerance) points
-      --x::xs ->
-      --  let
-      --    simplified = run' (abs tolerance) points
-      --  in
-      --    case simplified of
-      --      -- We always want the first element, which might get swallowed during simplification
-      --      --[s] -> x :: [s]
-      --      _ -> simplified
 
 
 run' : Float -> List Point -> List Point
@@ -53,4 +45,3 @@ run' tolerance points =
             _ -> x :: tail
       in
         simplified
-        --x :: tail
