@@ -34,7 +34,7 @@ view address model =
         [ Html.h1 [] [ Html.text "Elm Simplify" ]
         , Html.input
           [ Html.Attributes.type' "range"
-          , Html.Attributes.min "0"
+          , Html.Attributes.min "0.01"
           , Html.Attributes.max "5"
           , Html.Attributes.step "0.1"
           , Html.Attributes.value <| toString model
