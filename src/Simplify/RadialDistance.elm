@@ -25,7 +25,7 @@ run tolerance points =
       [x] -> points
       [x,y] -> points
       --_ -> run' (abs tolerance) points
-      _ -> run'' (abs tolerance) points []
+      _ -> run'' (abs tolerance) [] points
 
 
 run' : Float -> List Point -> List Point
@@ -48,11 +48,14 @@ run' tolerance points =
         simplified
 
 run'' : Float -> List Point -> List Point -> List Point
-run'' tolerance points accum =
+run'' tolerance accum points =
   case points of
     [] -> accum
     x::xs ->
       let
         isClose point = distance x point < tolerance
       in
-        run'' tolerance (dropWhile isClose xs) (List.append accum [x])
+        run''
+          tolerance
+          (List.append accum [x])
+          (dropWhile isClose xs)
