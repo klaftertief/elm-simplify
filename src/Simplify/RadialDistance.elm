@@ -36,10 +36,10 @@ run' tolerance points =
   in
     case head of
       Nothing -> points
-      Just point ->
+      Just x ->
         let
-          isClose point = distance point point < tolerance
+          isClose point = distance x point < tolerance
         in
           Array.append
-            (Array.fromList [point])
+            (Array.fromList [x])
             (run' tolerance <| dropWhile isClose tail)
