@@ -7,6 +7,7 @@ module Simplify.DouglasPeucker (run) where
 
 -}
 
+import Array exposing (Array)
 import Simplify.Util exposing (Point, farthestPoint, firstLast)
 
 
@@ -14,39 +15,40 @@ import Simplify.Util exposing (Point, farthestPoint, firstLast)
 
     runDouglasPeucker  1 longListOfPoints == shortListOfPoints
 -}
-run : Float -> List Point -> List Point
+run : Float -> Array Point -> Array Point
 run tolerance points =
   if tolerance == 0 then
     points
   else
-    case points of
+    case Array.length points of
       -- No simplification for short lists
-      [] -> points
-      [x] -> points
-      [x,y] -> points
+      0 -> points
+      1 -> points
+      2 -> points
       _ -> run' (abs tolerance) points
 
 
-run' : Float -> List Point -> List Point
+run' : Float -> Array Point -> Array Point
 run' tolerance points =
-  case points of
-    [] -> points
-    _ ->
+  case Array.isEmpty points of
+    True -> points
+    False ->
       let
         farthestPointState = farthestPoint points
       in
         if farthestPointState.distance > tolerance then
           let
-            taken = List.take (farthestPointState.index + 1) points
-            dropped = List.drop farthestPointState.index points
+            taken = Array.slice 0 (farthestPointState.index + 1) points
+            dropped = Array.slice farthestPointState.index (Array.length points) points
           in
-            List.append
+            Array.append
               (run' tolerance taken)
-              (List.drop 1 <| run' tolerance dropped)
+              -- TODO: remove first element
+              (run' tolerance dropped)
         else
           let
             (first, last) = firstLast points
           in
             case (first, last) of
-              (Just first, Just last) -> [first, last]
+              (Just first, Just last) -> Array.fromList [first, last]
               _ -> points

@@ -7,6 +7,7 @@ module Simplify (run) where
 
 -}
 
+import Array exposing (Array)
 import Simplify.DouglasPeucker as DouglasPeucker
 import Simplify.RadialDistance as RadialDistance
 import Simplify.Util exposing (Point)
@@ -16,7 +17,7 @@ import Simplify.Util exposing (Point)
 
     run 1 [...] == [...]
 -}
-run : Float -> List Point -> List Point
+run : Float -> Array Point -> Array Point
 run tolerance points =
   points
     |> RadialDistance.run tolerance

@@ -1,3 +1,4 @@
+import Array
 import Html
 import Html.Events exposing (onClick, on)
 import Html.Attributes
@@ -8,14 +9,15 @@ import StartApp.Simple as StartApp
 import String
 
 import Simplify
-import Fixtures exposing (seventythousand)
+import Fixtures exposing (seventythousand, many)
 
+seventythousandA = Array.fromList seventythousand
 
 model = 1
 
 view address model =
   let
-    simplified = Simplify.run model seventythousand
+    simplified = Simplify.run model seventythousandA
   in
     Html.div []
       [ Html.fromElement <| collage 800 500
@@ -34,7 +36,7 @@ view address model =
         [ Html.h1 [] [ Html.text "Elm Simplify" ]
         , Html.input
           [ Html.Attributes.type' "range"
-          , Html.Attributes.min "0.01"
+          , Html.Attributes.min "0"
           , Html.Attributes.max "5"
           , Html.Attributes.step "0.1"
           , Html.Attributes.value <| toString model
@@ -43,18 +45,18 @@ view address model =
           ]
           [ ]
         , Html.p []
-          [ Html.strong [] [ Html.text <| toString <| List.length seventythousand ]
+          [ Html.strong [] [ Html.text <| toString <| Array.length seventythousandA ]
           , Html.text " points simplified with a tolerance of "
           , Html.strong [] [ Html.text <| toString model ]
           , Html.text "px to "
-          , Html.strong [] [ Html.text <| toString <| List.length simplified ]
+          , Html.strong [] [ Html.text <| toString <| Array.length simplified ]
           , Html.text " points."
           ]
         ]
       ]
 
 fromPoints points =
-  path <| List.map fromPoint points
+  path <| Array.toList (Array.map fromPoint points)
 
 fromPoint point =
   (point.x, point.y)

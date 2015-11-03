@@ -7,6 +7,7 @@ module Simplify.RadialDistance (run) where
 
 -}
 
+import Array exposing (Array)
 import Simplify.Util exposing (Point, dropWhile, distance)
 
 
@@ -14,34 +15,31 @@ import Simplify.Util exposing (Point, dropWhile, distance)
 
     runRadialDistance 1 longListOfPoints == shortListOfPoints
 -}
-run : Float -> List Point -> List Point
+run : Float -> Array Point -> Array Point
 run tolerance points =
   if tolerance == 0 then
     points
   else
-    case points of
+    case Array.length points of
       -- No simplification for short lists
-      [] -> points
-      [x] -> points
-      [x,y] -> points
+      0 -> points
+      1 -> points
+      2 -> points
       _ -> run' (abs tolerance) points
 
 
-run' : Float -> List Point -> List Point
+run' : Float -> Array Point -> Array Point
 run' tolerance points =
-  case points of
-    [] -> []
-    [x] -> points
-    [x,y] -> points
-    x::xs ->
-      let
-        isClose point = distance x point < tolerance
-        tail = run' tolerance <| dropWhile isClose xs
-        simplified =
-          case tail of
-            -- Make sure that the last element in the simplified list is always
-            -- the last element from the original list.
-            [] -> (List.reverse >> List.take 1) xs
-            _ -> x :: tail
-      in
-        simplified
+  let
+    head = Array.get 0 points
+    tail = Array.slice 1 (Array.length points) points
+  in
+    case head of
+      Nothing -> points
+      Just point ->
+        let
+          isClose point = distance point point < tolerance
+        in
+          Array.append
+            (Array.fromList [point])
+            (run' tolerance <| dropWhile isClose tail)

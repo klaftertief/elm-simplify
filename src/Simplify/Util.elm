@@ -9,21 +9,27 @@ module Simplify.Util
   ) where
 
 
-dropWhile : (a -> Bool) -> List a -> List a
-dropWhile predicate list =
-  case list of
-    [] -> []
-    x::xs ->
-      if predicate x then
-        dropWhile predicate xs
-      else
-        list
+import Array exposing (Array)
 
-firstLast : List a -> (Maybe a, Maybe a)
-firstLast list =
+dropWhile : (a -> Bool) -> Array a -> Array a
+dropWhile predicate array =
   let
-    first = List.head list
-    last = List.head <| List.reverse list
+    head = Array.get 0 array
+    tail = Array.slice 1 (Array.length array) array
+  in
+    case head of
+      Nothing -> array
+      Just point ->
+        if predicate point then
+          dropWhile predicate tail
+        else
+          array
+
+firstLast : Array a -> (Maybe a, Maybe a)
+firstLast array =
+  let
+    first = Array.get 0 array
+    last = Array.get (Array.length array - 1) array
   in (first, last)
 
 type alias Point =
@@ -43,11 +49,10 @@ type alias FarthestPointState =
   , point : Maybe Point
   }
 
-farthestPoint : List Point -> FarthestPointState
+farthestPoint : Array Point -> FarthestPointState
 farthestPoint points =
   let
-    first = List.head points
-    last = List.head <| List.reverse points
+    (first, last) = firstLast points
     state =
       { i = -1
       , index = 0
@@ -57,7 +62,7 @@ farthestPoint points =
   in
     case (first, last) of
       (Just first, Just last) ->
-        List.foldl (farthestPoint' (first, last)) state points
+        Array.foldl (farthestPoint' (first, last)) state points
       _ -> state
 
 farthestPoint' : Segment -> Point -> FarthestPointState -> FarthestPointState
