@@ -38,13 +38,12 @@ run' tolerance points =
       in
         if farthestPointState.distance > tolerance then
           let
-            taken = Array.slice 0 (farthestPointState.index + 1) points
-            dropped = Array.slice farthestPointState.index (Array.length points) points
+            taken = run' tolerance <| Array.slice 0 (farthestPointState.index + 1) points
+            dropped = run' tolerance <| Array.slice farthestPointState.index (Array.length points) points
           in
             Array.append
-              (run' tolerance taken)
-              -- TODO: remove first element
-              (run' tolerance dropped)
+              taken
+              (Array.slice 1 (Array.length dropped) dropped)
         else
           let
             (first, last) = firstLast points
