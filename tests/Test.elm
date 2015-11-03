@@ -27,10 +27,10 @@ tests =
     , test "Don't simplify two points" (assertEqual twoPoints (run 5 twoPoints))
 
     , test "Always keep first point" (assertEqual (Array.get 0 points) (Array.get 0 (run 50 points)))
-    --, test "Always keep last point" (assertEqual ((List.reverse >> List.take 1) points) ((List.reverse >> List.take 1) (run 1 points)))
-    --, test "Always keep last point (with high tolerance)" (assertEqual ((List.reverse >> List.take 1) points) ((List.reverse >> List.take 1) (run 100 points)))
+    , test "Always keep last point" (assertEqual (Array.get (Array.length points - 1) points) (Array.get (Array.length (run 1 points) - 1) (run 1 points)))
+    , test "Always keep last point (with high tolerance)" (assertEqual (Array.get (Array.length points - 1) points) (Array.get (Array.length (run 100 points) - 1) (run 100 points)))
 
-    , test "Simplify points correctly with given tolerance" (assertEqual pointsSimplifiedWith5 (run 5 points))
+    , test "Simplify points correctly with given tolerance" (assertEqual (Array.toList pointsSimplifiedWith5) (Array.toList (run 5 points)))
     ]
 
 results : String
