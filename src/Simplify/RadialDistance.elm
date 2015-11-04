@@ -9,7 +9,7 @@ module Simplify.RadialDistance (run) where
 
 import Array exposing (Array)
 import Simplify.Util exposing (Point, dropWhile, distance)
-
+import Trampoline exposing (Trampoline)
 
 {-| Simplify a list of points using the Radial Distance algorithm.
 
@@ -25,21 +25,25 @@ run tolerance points =
       0 -> points
       1 -> points
       2 -> points
-      _ -> run' (abs tolerance) points
+      _ -> run' (abs tolerance) Array.empty points
 
 
-run' : Float -> Array Point -> Array Point
-run' tolerance points =
+run' : Float  -> Array Point -> Array Point -> Trampoline (Array Point)
+run' tolerance accum points =
   let
     head = Array.get 0 points
     tail = Array.slice 1 (Array.length points) points
   in
     case head of
-      Nothing -> points
+      Nothing -> Trampoline.Done accum
       Just x ->
         let
           isClose point = distance x point < tolerance
         in
-          Array.append
-            (Array.fromList [x])
-            (run' tolerance <| dropWhile isClose tail)
+          Trampoline.Continue
+            (\_ ->
+              run'
+                tolerance
+                (Array.append accum (Array.fromList [x]))
+                (dropWhile isClose tail)
+            )
