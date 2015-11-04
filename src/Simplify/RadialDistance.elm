@@ -9,7 +9,7 @@ module Simplify.RadialDistance (run) where
 
 import Array exposing (Array)
 import Simplify.Util exposing (Point, dropWhile, distance)
-import Trampoline exposing (Trampoline)
+import Trampoline exposing (Trampoline, trampoline)
 
 {-| Simplify a list of points using the Radial Distance algorithm.
 
@@ -25,7 +25,7 @@ run tolerance points =
       0 -> points
       1 -> points
       2 -> points
-      _ -> run' (abs tolerance) Array.empty points
+      _ ->  trampoline <| run' (abs tolerance) Array.empty points
 
 
 run' : Float  -> Array Point -> Array Point -> Trampoline (Array Point)
